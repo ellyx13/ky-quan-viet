@@ -8,7 +8,7 @@ from utils import value
 
 from . import models, schemas
 from .exceptions import ErrorCode as UserErrorCode
-
+from .config import settings
 
 class UserServices(BaseServices):
     def __init__(self, service_name: str, crud: BaseCRUD = None) -> None:
@@ -26,6 +26,24 @@ class UserServices(BaseServices):
         results = await self.get_by_field(data=email, field_name="email", ignore_error=ignore_error)
         return results[0] if results else None
 
+    async def change_type(self, _id: str, type: str, commons: CommonsDependencies = None) -> dict:
+        data = {"type": type}
+        return await self.update_by_id(_id=_id, data=data, commons=commons)
+
+    async def create_admin(self) -> dict | None:
+        user = await self.get_by_field(data=settings.default_admin_email, field_name="email", ignore_error=True)
+        if user: 
+            return None
+        data = {}
+        data["fullname"] = "Admin" 
+        data["email"] = settings.default_admin_email
+        data["password"] = settings.default_admin_password
+        admin = await self.register(data=data)
+        admin = await self.change_type(_id=admin["_id"], type=value.UserRoles.ADMIN.value)
+        admin["access_token"] = await authentication_services.create_access_token(user_id=admin["_id"], user_type=admin["type"])
+        admin["token_type"] = "bearer"
+        return admin
+    
     async def register(self, data: schemas.RegisterRequest) -> dict:
         # Set the user role to 'USER' by default.
         data["type"] = value.UserRoles.USER.value

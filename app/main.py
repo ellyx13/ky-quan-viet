@@ -9,7 +9,17 @@ from fastapi.routing import APIRoute
 from loguru import logger
 from middlewares.v1.authentication import AuthenticationMiddleware
 from routers import api_routers
+from contextlib import asynccontextmanager
+from users.services import user_services
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Application starting.")
+    await user_services.create_admin()
+    yield
+    print("Application shutdown.")
+    
+    
 app = FastAPI(
     title="FastAPI Base Project",
     description="""
@@ -23,6 +33,7 @@ app = FastAPI(
       actions, and 'admin' enjoys full access across the platform.
     """,
     version="0.0.1",
+    lifespan=lifespan
 )
 
 
