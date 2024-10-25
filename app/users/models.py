@@ -12,4 +12,3 @@ class Users(BaseModel):
     password: bytes
     type: Literal["admin", "user"]
     created_at: datetime
-    created_by: Optional[ObjectIdStr] = None
