@@ -33,6 +33,7 @@ class Response(BaseModel):
     email: EmailStr
     phone: Optional[PhoneStr] = None
     type: str
+    score: Optional[int] = None
     created_at: datetime
     created_by: str
 
@@ -52,3 +53,4 @@ class LoginResponse(Response):
 class EditRequest(BaseModel):
     fullname: Optional[str] = None
     phone: Optional[PhoneStr] = None
+    
