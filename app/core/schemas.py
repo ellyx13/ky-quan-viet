@@ -156,8 +156,27 @@ def check_date_format(value: str) -> str:
     except ValueError:
         raise CoreErrorCode.InvalidDate(date=value)
 
+def check_datetime_str(value: str) -> str:
+    """
+    Validates whether a given string matches the datetime format "%Y-%m-%d %H:%M:%S".
+
+    Args:
+        value (str): The string to validate as a datetime.
+
+    Returns:
+        str: The validated datetime string.
+
+    Raises:
+        CoreErrorCode.InvalidDate: If the string does not match the datetime format "%Y-%m-%d %H:%M:%S".
+    """
+    try:
+        datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        return value
+    except ValueError:
+        raise CoreErrorCode.InvalidDateTime(date=value)
 
 ObjectIdStr = Annotated[str, AfterValidator(check_object_id)]
 EmailStr = Annotated[str, AfterValidator(check_email)]
 PhoneStr = Annotated[str, AfterValidator(check_phone)]
 DateStr = Annotated[str, AfterValidator(check_date_format)]
+DateTimeStr = Annotated[str, AfterValidator(check_datetime_str)]
