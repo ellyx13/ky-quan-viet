@@ -18,8 +18,8 @@ class Response(BaseModel):
     guest_id: Optional[str] = None
     status: str
     type: str
-    started_at: Optional[str] = None
-    ended_at: Optional[str] = None
+    start_at: Optional[str] = None
+    end_at: Optional[str] = None
     created_at: datetime
     created_by: str
 
