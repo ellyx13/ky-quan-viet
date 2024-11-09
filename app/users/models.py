@@ -11,4 +11,10 @@ class Users(BaseModel):
     phone: Optional[PhoneStr] = None
     password: bytes
     type: Literal["admin", "user"]
+    score: Optional[int] = 0
     created_at: datetime
+    created_by: ObjectIdStr
+    updated_at: Optional[datetime] = None
+    updated_by: Optional[ObjectIdStr] = None
+    deleted_at: Optional[datetime] = None
+    deleted_by: Optional[ObjectIdStr] = None
