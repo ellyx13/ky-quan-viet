@@ -58,7 +58,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    # needs: build
+    needs: build
     env:
       ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
       APP_DATABASE_NAME:  ${{ secrets.APP_DATABASE_NAME }}
