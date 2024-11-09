@@ -1,6 +1,6 @@
 services:
   api:
-    container_name: Kyquanviet API
+    container_name: kyquanviet-api
     image: ellyx13/projects:kyquanviet-api
     restart: always
     command: uvicorn main:app --reload --workers 2 --host 0.0.0.0 --port 8005
@@ -19,7 +19,7 @@ services:
       - db
 
   db:
-    container_name: Kyquanviet Database
+    container_name: kyquanviet-database
     image: mongo
     restart: always
     volumes:

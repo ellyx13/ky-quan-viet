@@ -118,5 +118,5 @@ jobs:
             cd ${{ env.PROJECT_PATH }}
             docker login -u ${{ secrets.USERNAME_DOCKER_HUB }} -p ${{ secrets.PASSWORD_DOCKER_HUB }}
             mv docker-compose-prod.yml docker-compose.yml
-            docker compose pull api
+            docker compose pull api --quiet
             docker compose up -d api
