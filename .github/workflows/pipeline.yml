@@ -15,12 +15,12 @@ jobs:
         run: |
           mkdir -p .env
           echo "ENVIRONMENT=$ENVIRONMENT" > .env/test.env
-          echo "APP_DATABASE_NAME=$APP_DATABASE_NAME" >> .env/test.env
           echo "DATABASE_URL=$DATABASE_URL" >> .env/test.env
-          echo "SECRET_KEY=$SECRET_KEY" >> .env/test.env
-          echo "ALGORITHM=$ALGORITHM" >> .env/test.env
-          echo "DEFAULT_ADMIN_EMAIL=$DEFAULT_ADMIN_EMAIL" >> .env/test.env
-          echo "DEFAULT_ADMIN_PASSWORD=$DEFAULT_ADMIN_PASSWORD" >> .env/test.env
+          echo "APP_DATABASE_NAME=$APP_DATABASE_NAME" >> .env/dev.env
+          echo "SECRET_KEY=$SECRET_KEY" >> .env/dev.env
+          echo "ALGORITHM=$ALGORITHM" >> .env/dev.env
+          echo "DEFAULT_ADMIN_EMAIL=$DEFAULT_ADMIN_EMAIL" >> .env/dev.env
+          echo "DEFAULT_ADMIN_PASSWORD=$DEFAULT_ADMIN_PASSWORD" >> .env/dev.env
         shell: bash
         env:
           ENVIRONMENT: ${{ env.ENVIRONMENT }}
