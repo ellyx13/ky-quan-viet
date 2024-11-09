@@ -88,7 +88,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
           script: |
-            cd $PROJECT_PATH
+            cd ${{ env.PROJECT_PATH }}
             mkdir -p .env
             echo "ENVIRONMENT=$ENVIRONMENT" > .env/prod.env
             echo "DATABASE_URL=$DATABASE_URL" >> .env/prod.env
@@ -109,7 +109,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
           source: "bin/deploy/deploy_db.sh,bin/deploy/deploy_api.sh"
-          target: $PROJECT_PATH
+          target: ${{ env.PROJECT_PATH }}
       
       - name: Deploy database
         uses: appleboy/ssh-action@v1.1.0
@@ -119,7 +119,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
           script: |
-            cd $PROJECT_PATH
+            cd ${{ env.PROJECT_PATH }}
             chmod +x deploy_db.sh && ./deploy_db.sh
 
       - name: Deploy API
@@ -130,7 +130,7 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
           script: |
-            cd $PROJECT_PATH
+            cd ${{ env.PROJECT_PATH }}
             chmod +x deploy_api.sh && ./deploy_api.sh
 
 
