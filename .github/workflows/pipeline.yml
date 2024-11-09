@@ -85,6 +85,7 @@ jobs:
             cd "$PROJECT_PATH"
             mkdir -p .env
             echo > .env/prod.env
+            echo > .env/db.prod.env
             echo "ENVIRONMENT=$ENVIRONMENT" > .env/prod.env
             echo "DATABASE_URL=$DATABASE_URL" >> .env/prod.env
             echo "APP_DATABASE_NAME=$APP_DATABASE_NAME" >> .env/prod.env
