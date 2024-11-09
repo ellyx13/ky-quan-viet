@@ -107,7 +107,7 @@ jobs:
             -v $(pwd)/database:/data/db \
             -p 27021:27017 \
             --env-file ./.env/db.prod.env \
-            --health-cmd "echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --quiet | grep 1" \
+            --health-cmd "echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin --username $USERNAME_DATABASE --password $PASSWORD_DATABASE --quiet | grep 1" \
             --health-interval 60s \
             --health-timeout 60s \
             --health-retries 6 \
@@ -124,18 +124,20 @@ jobs:
           port: ${{ secrets.PORT_SERVER }}
           script: |
             cd $PROJECT_PATH
-            docker ps -a --format '{{.Names}}' | grep -wq kyquanviet-db || docker run -d \
-            --name kyquanviet-db \
+            docker run -d \
+            --name kyquanviet-api \
             --restart always \
-            -v $(pwd)/database:/data/db \
-            -p 27021:27017 \
-            --env-file ./.env/db.prod.env \
-            --health-cmd "echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --quiet | grep 1" \
+            -v $(pwd)/app/:/opt/projects/app/ \
+            -v $(pwd)/logs/:/opt/projects/app/logs \
+            -p 8011:8005 \
+            --env-file ./.env/prod.env \
+            --health-cmd "sh -c 'curl -s -f http://localhost:8005/v1/health/ping || exit 1'" \
             --health-interval 60s \
-            --health-timeout 60s \
-            --health-retries 6 \
-            mongo \
-            --quiet
+            --health-timeout 3s \
+            --health-retries 3 \
+            ellyx13/projects:kyquanviet-api \
+            uvicorn main:app --reload --workers 2 --host 0.0.0.0 --port 8005
+
 
       
 
