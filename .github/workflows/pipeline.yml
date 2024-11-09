@@ -92,6 +92,25 @@ jobs:
             echo "PASSWORD_DATABASE=$PASSWORD_DATABASE" >> .env/db.prod.env
           envs: ENVIRONMENT, APP_DATABASE_NAME, DATABASE_URL, SECRET_KEY, ALGORITHM, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD, USERNAME_DATABASE, PASSWORD_DATABASE, PROJECT_PATH
 
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy file deploy
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST_SERVER }}
+          username: ${{ secrets.USERNAME_SERVER }}
+          key: ${{ secrets.PRIVATE_KEY_SERVER }}
+          port: ${{ secrets.PORT_SERVER }}
+          source: "bin/deploy/deploy_db.sh,bin/deploy/deploy_api.sh"
+          target: $PROJECT_PATH
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.USERNAME_DOCKER_HUB }}
+          password: ${{ secrets.PASSWORD_DOCKER_HUB }}
+
       - name: Deploy database
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -101,18 +120,7 @@ jobs:
           port: ${{ secrets.PORT_SERVER }}
           script: |
             cd $PROJECT_PATH
-            docker ps -a --format '{{.Names}}' | grep -wq kyquanviet-db || docker run -d \
-            --name kyquanviet-db \
-            --restart always \
-            -v $(pwd)/database:/data/db \
-            -p 27021:27017 \
-            --env-file ./.env/db.prod.env \
-            --health-cmd "echo 'db.runCommand({serverStatus:1}).ok' | mongosh admin --username $USERNAME_DATABASE --password $PASSWORD_DATABASE --quiet | grep 1" \
-            --health-interval 60s \
-            --health-timeout 60s \
-            --health-retries 6 \
-            mongo \
-            --quiet
+            chmod +x deploy_db.sh && ./deploy_db.sh
 
       
       - name: Deploy API
@@ -124,19 +132,7 @@ jobs:
           port: ${{ secrets.PORT_SERVER }}
           script: |
             cd $PROJECT_PATH
-            docker run -d \
-            --name kyquanviet-api \
-            --restart always \
-            -v $(pwd)/app/:/opt/projects/app/ \
-            -v $(pwd)/logs/:/opt/projects/app/logs \
-            -p 8011:8005 \
-            --env-file ./.env/prod.env \
-            --health-cmd "sh -c 'curl -s -f http://localhost:8005/v1/health/ping || exit 1'" \
-            --health-interval 60s \
-            --health-timeout 3s \
-            --health-retries 3 \
-            ellyx13/projects:kyquanviet-api \
-            uvicorn main:app --reload --workers 2 --host 0.0.0.0 --port 8005
+            chmod +x deploy_api.sh && ./deploy_api.sh
 
 
       
