@@ -60,9 +60,9 @@ jobs:
     environment: production
     # needs: build
     env:
-      ENVIRONMENT: $ENVIRONMENT
-      FOO: "bar"
-      APP_DATABASE_NAME: $APP_DATABASE_NAME
+      ENVIRONMENT: production
+      APP_DATABASE_NAME:  ${{ secrets.APP_DATABASE_NAME }}
+      PROJECT_PATH:  ${{ secrets.PROJECT_PATH }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALGORITHM: ${{ secrets.ALGORITHM }}
@@ -89,7 +89,7 @@ jobs:
           port: ${{ secrets.PORT_SERVER }}
           script: |
             echo "I am $FOO"
-            echo "$PROJECT_PATH"
+            echo "Here $PROJECT_PATH"
             cd "$PROJECT_PATH"
             mkdir -p .env
             echo "ENVIRONMENT=$ENVIRONMENT" > .env/prod.env
