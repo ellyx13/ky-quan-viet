@@ -84,6 +84,7 @@ jobs:
           script: |
             cd "$PROJECT_PATH"
             mkdir -p .env
+            echo > .env/prod.env
             echo "ENVIRONMENT=$ENVIRONMENT" > .env/prod.env
             echo "DATABASE_URL=$DATABASE_URL" >> .env/prod.env
             echo "APP_DATABASE_NAME=$APP_DATABASE_NAME" >> .env/prod.env
@@ -102,7 +103,7 @@ jobs:
           username: ${{ secrets.USERNAME_SERVER }}
           key: ${{ secrets.PRIVATE_KEY_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
-          source: "bin/deploy/deploy_db.sh,bin/deploy/deploy_api.sh, docker-compose-prod.yml"
+          source: "docker-compose-prod.yml"
           target: ${{ env.PROJECT_PATH }}
 
       - name: Deploy API
