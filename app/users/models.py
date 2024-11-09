@@ -13,7 +13,7 @@ class Users(BaseModel):
     type: Literal["admin", "user"]
     score: Optional[int] = 0
     created_at: datetime
-    created_by: ObjectIdStr
+    created_by: Optional[ObjectIdStr] = None
     updated_at: Optional[datetime] = None
     updated_by: Optional[ObjectIdStr] = None
     deleted_at: Optional[datetime] = None
