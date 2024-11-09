@@ -88,8 +88,8 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
           script: |
-            echo ${{ env.PROJECT_PATH }}
-            cd ${{ env.PROJECT_PATH }}
+            echo "$PROJECT_PATH"
+            cd "$PROJECT_PATH"
             mkdir -p .env
             echo "ENVIRONMENT=$ENVIRONMENT" > .env/prod.env
             echo "DATABASE_URL=$DATABASE_URL" >> .env/prod.env
