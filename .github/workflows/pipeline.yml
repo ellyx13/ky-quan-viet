@@ -102,19 +102,8 @@ jobs:
           username: ${{ secrets.USERNAME_SERVER }}
           key: ${{ secrets.PRIVATE_KEY_SERVER }}
           port: ${{ secrets.PORT_SERVER }}
-          source: "bin/deploy/deploy_db.sh,bin/deploy/deploy_api.sh"
+          source: "bin/deploy/deploy_db.sh,bin/deploy/deploy_api.sh, docker-compose-prod.yml"
           target: ${{ env.PROJECT_PATH }}
-      
-      - name: Deploy database
-        uses: appleboy/ssh-action@v1.1.0
-        with:
-          host: ${{ secrets.HOST_SERVER }}
-          username: ${{ secrets.USERNAME_SERVER }}
-          key: ${{ secrets.PRIVATE_KEY_SERVER }}
-          port: ${{ secrets.PORT_SERVER }}
-          script: |
-            cd ${{ env.PROJECT_PATH }}
-            chmod +x bin/deploy/deploy_db.sh && ./bin/deploy/deploy_db.sh
 
       - name: Deploy API
         uses: appleboy/ssh-action@v1.1.0
@@ -126,7 +115,7 @@ jobs:
           script: |
             cd ${{ env.PROJECT_PATH }}
             docker login -u ${{ secrets.USERNAME_DOCKER_HUB }} -p ${{ secrets.PASSWORD_DOCKER_HUB }}
-            chmod +x bin/deploy/deploy_api.sh && ./bin/deploy/deploy_api.sh
+            docker compose -f docker-compose-prod.yml up -d
 
 
       
