@@ -18,7 +18,7 @@ class RoutersCBV:
 
     @router.get("/games", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get games success"}})
     async def get_all(self, pagination: PaginationParams = Depends()):
-        search_in = ["code"]
+        search_in = ["name", "code"]
         results = await game_controllers.get_all(
             query=pagination.query,
             search=pagination.search,
