@@ -6,16 +6,18 @@ from pydantic import BaseModel, Field
 
 
 class CreateRequest(BaseModel):
-    host_id: ObjectIdStr
-    guest_id: Optional[ObjectIdStr] = None
+    name: str
+    is_guest_ai: Optional[bool] = False
     type: Literal["public", "private"]
 
 
 class Response(BaseModel):
     id: str = Field(alias="_id")
+    name: str
     code: int
     host_id: str
     guest_id: Optional[str] = None
+    is_guest_ai: Optional[bool] = None
     status: str
     type: str
     start_at: Optional[str] = None
@@ -32,4 +34,5 @@ class ListResponse(BaseModel):
 
 
 class EditRequest(BaseModel):
+    name: Optional[str] = None
     type: Optional[Literal["public", "private"]] = None

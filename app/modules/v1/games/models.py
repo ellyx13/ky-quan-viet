@@ -6,9 +6,11 @@ from pydantic import BaseModel
 
 
 class Games(BaseModel):
+    name: str
     code: int
     host_id: ObjectIdStr
     guest_id: Optional[ObjectIdStr] = None
+    is_guest_ai: Optional[bool] = False
     status: Literal["waiting", "in_progress", "completed"]
     type: Literal["public", "private"]
     start_at: Optional[datetime] = None
