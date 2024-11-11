@@ -16,7 +16,7 @@ router = InferringRouter(
 class RoutersCBV:
     commons: CommonsDependencies = Depends(CommonsDependencies)  # type: ignore
 
-    @router.get("/moves", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get moves success"}})
+    @router.get("/game/moves", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get moves success"}})
     async def get_all(self, pagination: PaginationParams = Depends()):
         search_in = []
         results = await move_controllers.get_all(
@@ -34,18 +34,3 @@ class RoutersCBV:
             return results
         return schemas.ListResponse(**results)
 
-    @router.get("/moves/{_id}", status_code=200, responses={200: {"model": schemas.Response, "description": "Get moves success"}})
-    async def get_detail(self, _id: ObjectIdStr, fields: str = None):
-        results = await move_controllers.get_by_id(_id=_id, fields_limit=fields, commons=self.commons)
-        if fields:
-            return results
-        return schemas.Response(**results)
-
-    @router.post("/moves", status_code=201, responses={201: {"model": schemas.Response, "description": "Create move success"}})
-    async def create(self, data: schemas.CreateRequest):
-        result = await move_controllers.create(data=data, commons=self.commons)
-        return schemas.Response(**result)
-
-    @router.delete("/moves/{_id}", status_code=204)
-    async def delete(self, _id: ObjectIdStr):
-        results = await move_controllers.soft_delete_by_id(_id=_id, commons=self.commons)

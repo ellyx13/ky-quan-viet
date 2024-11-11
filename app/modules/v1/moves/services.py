@@ -23,6 +23,5 @@ class MoveServices(BaseServices):
 
     
 
-
-task_crud = BaseCRUD(database_engine=app_engine, collection="moves")
-task_services = MoveServices(service_name="moves", crud=task_crud)
+move_crud = BaseCRUD(database_engine=app_engine, collection="moves")
+move_services = MoveServices(service_name="moves", crud=move_crud)

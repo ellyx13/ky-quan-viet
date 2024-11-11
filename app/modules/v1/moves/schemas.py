@@ -5,13 +5,6 @@ from pydantic import BaseModel, Field
 from core.schemas import ObjectIdStr
 
 
-class CreateRequest(BaseModel):
-    game_id: ObjectIdStr
-    player_id: ObjectIdStr
-    move_number: int
-    state: list
-
-
 class Response(BaseModel):
     id: str = Field(alias="_id")
     game_id: str

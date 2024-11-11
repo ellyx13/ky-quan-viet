@@ -16,5 +16,3 @@ class Moves(BaseModel):
     created_by: ObjectIdStr
     updated_at: Optional[datetime] = None
     updated_by: Optional[ObjectIdStr] = None
-    deleted_at: Optional[datetime] = None
-    deleted_by: Optional[ObjectIdStr] = None
