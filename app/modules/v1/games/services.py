@@ -3,7 +3,8 @@ from core.services import BaseServices
 from db.base import BaseCRUD
 from db.engine import app_engine
 
-from . import models, schemas, exceptions
+from . import models, schemas
+from .exceptions import ErrorCode as GameErrorCode 
 import random
 
 
@@ -23,7 +24,7 @@ class GameServices(BaseServices):
         if data_check:
             for record in data_check:
                 if record["status"] in ["waiting" ,"in_progress"]:
-                    raise exceptions.ErrorCode.InvalidCreateGame()
+                    raise GameErrorCode.AlreadyGame()
         return await self.save_unique(data=data_save, unique_field="code")
     
     async def edit(self, _id: str, data: schemas.EditRequest, commons: CommonsDependencies) -> dict:
