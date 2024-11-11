@@ -53,7 +53,7 @@ class AuthenticationServices(BaseServices):
         except Exception:
             return False
 
-    async def check_public_api(self, request: Request) -> bool:
+    async def check_public_api(self, api_path: str) -> bool:
         """
         Checks if the API being accessed is a public API.
 
@@ -64,7 +64,6 @@ class AuthenticationServices(BaseServices):
             bool: True if the API path is listed as a public API, False otherwise.
 
         """
-        api_path = request.url.path
         if api_path in PUBLIC_APIS:
             return True
         return False

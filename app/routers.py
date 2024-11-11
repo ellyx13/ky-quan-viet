@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from modules.v1.health import routers as health_routers
 from modules.v1.tasks import routers as tasks_routers
 from modules.v1.games import routers as games_routers
+from modules.v1.games import socket as games_socket
 from users import routers as users_routers
 
 api_routers = APIRouter()
@@ -17,3 +18,4 @@ api_routers.include_router(tasks_routers.router)
 
 # Modules
 api_routers.include_router(games_routers.router)
+api_routers.include_router(games_socket.router)
