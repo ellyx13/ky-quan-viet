@@ -16,8 +16,8 @@ router = InferringRouter(
 class RoutersCBV:
     commons: CommonsDependencies = Depends(CommonsDependencies)  # type: ignore
 
-    @router.get("/game/moves", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get moves success"}})
-    async def get_all(self, pagination: PaginationParams = Depends()):
+    @router.get("/game/{game_id}/moves", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get moves success"}})
+    async def get_all(self, game_id: ObjectIdStr, pagination: PaginationParams = Depends()):
         search_in = []
         results = await move_controllers.get_all(
             query=pagination.query,
@@ -28,9 +28,9 @@ class RoutersCBV:
             fields_limit=pagination.fields,
             sort_by=pagination.sort_by,
             order_by=pagination.order_by,
+            game_id=game_id,
             commons=self.commons,
         )
         if pagination.fields:
             return results
         return schemas.ListResponse(**results)
-
