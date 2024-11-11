@@ -5,12 +5,6 @@ from core.schemas import ObjectIdStr
 from pydantic import BaseModel, Field
 
 
-class CreateRequest(BaseModel):
-    game_id: ObjectIdStr
-    score: int
-    winner: ObjectIdStr
-    duration: int
-
 
 class Response(BaseModel):
     id: str = Field(alias="_id")

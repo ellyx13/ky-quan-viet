@@ -14,10 +14,5 @@ class HistoryControllers(BaseControllers):
         data = data.model_dump()
         return await self.service.create(data=data, commons=commons)
 
-    # async def edit(self, _id: str, data: schemas.EditRequest, commons: CommonsDependencies) -> dict:
-    #     await self.get_by_id(_id=_id, commons=commons)
-    #     data = data.model_dump(exclude_none=True)
-    #     return await self.service.edit(_id=_id, data=data, commons=commons)
-
 
 history_controllers = HistoryControllers(controller_name="history", service=history_services)
