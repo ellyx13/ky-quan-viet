@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 class Response(BaseModel):
     id: str = Field(alias="_id")
-    game_id: StopIteration
+    game_id: str
     score: int
     winner: str
     duration: int

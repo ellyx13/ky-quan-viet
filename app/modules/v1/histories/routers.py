@@ -5,6 +5,7 @@ from fastapi_restful.inferring_router import InferringRouter
 
 from . import schemas
 from .controllers import history_controllers
+from ..games.controllers import game_controllers
 
 router = InferringRouter(
     prefix="/v1",
@@ -16,12 +17,9 @@ router = InferringRouter(
 class RoutersCBV:
     commons: CommonsDependencies = Depends(CommonsDependencies)  # type: ignore
 
-    @router.get("/user/{user_id}/histories", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get histories success"}})
+    @router.get("/users/{user_id}/histories", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get histories success"}})
     async def get_all(self, user_id: ObjectIdStr, pagination: PaginationParams = Depends()):
         search_in = []
-        pagination.query = ({
-            "winner": user_id
-        })
         results = await history_controllers.get_all(
             query=pagination.query,
             search=pagination.search,
@@ -31,6 +29,7 @@ class RoutersCBV:
             fields_limit=pagination.fields,
             sort_by=pagination.sort_by,
             order_by=pagination.order_by,
+            user_id=user_id,
             commons=self.commons,
         )
         if pagination.fields:

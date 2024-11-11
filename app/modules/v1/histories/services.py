@@ -10,7 +10,7 @@ class HistoryServices(BaseServices):
     def __init__(self, service_name: str, crud: BaseCRUD = None) -> None:
         super().__init__(service_name, crud)
 
-    async def create(self, data: schemas.CreateRequest, commons: CommonsDependencies) -> dict:
+    async def create(self, data: schemas, commons: CommonsDependencies) -> dict:
         data["created_by"] = self.get_current_user(commons=commons)
         data["created_at"] = self.get_current_datetime()
         data_save = models.Histories(**data).model_dump()
