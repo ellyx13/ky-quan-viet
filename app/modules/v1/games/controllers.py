@@ -19,7 +19,7 @@ class GameControllers(BaseControllers):
         data = data.model_dump(exclude_none=True)
         return await self.service.edit(_id=_id, data=data, commons=commons)
 
-    async def get_all(self, query = None, search = None, search_in = None, page = 1, limit = 20, fields_limit = None, sort_by = "created_at", order_by = "desc", include_deleted = False, commons = None):
+    async def get_all_games_public(self, query = None, search = None, search_in = None, page = 1, limit = 20, fields_limit = None, sort_by = "created_at", order_by = "desc", include_deleted = False, commons = None):
         query = ({
             "status": "waiting",
             "type": "public"
