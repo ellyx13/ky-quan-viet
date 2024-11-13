@@ -20,11 +20,10 @@ class MoveControllers(BaseControllers):
         return await self.service.edit(_id=_id, data=data, commons=commons)
 
     async def get_all(self, query = None, search = None, search_in = None, page = 1, limit = 20, fields_limit = None, sort_by = "created_at", order_by = "desc", include_deleted = False, game_id: str = None, commons = None):
-        if query is not None:
-            if game_id is not None:
-                query.update({
-                    "game_id": game_id
-                })
+        if query and game_id is not None:
+            query.update({
+                "game_id": game_id
+            })
         return await super().get_all(query, search, search_in, page, limit, fields_limit, sort_by, order_by, include_deleted, commons)
 
 move_controllers = MoveControllers(controller_name="moves", service=move_services)
