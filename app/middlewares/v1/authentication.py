@@ -1,6 +1,5 @@
 from auth.services import authentication_services
 from starlette.middleware.base import BaseHTTPMiddleware
-
 from .exceptions import ErrorCode as MiddlewareErrorCode
 
 
@@ -9,7 +8,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         super().__init__(app)
 
     async def dispatch(self, request, call_next):
-        is_public_api = await authentication_services.check_public_api(request=request)
+        is_public_api = await authentication_services.check_public_api(api_path=request.url.path)
         if is_public_api:
             request.state.payload = {"is_public_api": True}
         else:
