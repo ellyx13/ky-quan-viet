@@ -32,7 +32,6 @@ class GameControllers(BaseControllers):
 
     async def get_all_games_status(self, query = None, search = None, search_in = None, page = 1, limit = 20, fields_limit = None, sort_by = "created_at", order_by = "desc", include_deleted = False, commons = None):
         user_id = self.get_current_user(commons=commons)
-        self.get_current_user
         if query is not None:
             query.update({
                 "created_by": user_id
