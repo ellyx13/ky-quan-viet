@@ -27,15 +27,22 @@ class CommonsDependencies:
         is_public_api (bool, None): Indicates whether the request is from a public API, extracted from the request payload.
     """
 
-    def __init__(self, request: Request) -> None:
+    def __init__(self, request: Request = None) -> None:
         self.current_user = None
         self.user_type = None
         self.is_public_api = None
-        if hasattr(request.state, "payload"):
-            self.current_user =  request.state.payload.get("user_id")
+        if request and hasattr(request.state, "payload"):
+            self.current_user = request.state.payload.get("user_id")
             self.user_type = request.state.payload.get("user_type")
             self.is_public_api = request.state.payload.get("is_public_api")
 
+    @classmethod
+    def build_from_payload(cls, payload):
+        instance = cls()
+        instance.current_user = payload.get('user_id')
+        instance.user_type = payload.get('user_type')
+        instance.is_public_api = payload.get('is_public_api', False)
+        return instance
 
 class PaginationParams:
     """

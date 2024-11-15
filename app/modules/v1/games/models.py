@@ -11,7 +11,7 @@ class Games(BaseModel):
     host_id: ObjectIdStr
     guest_id: Optional[ObjectIdStr] = None
     is_guest_ai: Optional[bool] = False
-    status: Literal["waiting", "in_progress", "completed"]
+    status: Literal["pending", "waiting", "in_progress", "completed"]
     type: Literal["public", "private"]
     start_at: Optional[datetime] = None
     end_at: Optional[datetime] = None
