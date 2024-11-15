@@ -5,7 +5,6 @@ from fastapi_restful.inferring_router import InferringRouter
 
 from . import schemas
 from .controllers import game_controllers
-from .services import game_services
 
 router = InferringRouter(
     prefix="/v1",
@@ -16,24 +15,6 @@ router = InferringRouter(
 @cbv(router)
 class RoutersCBV:
     commons: CommonsDependencies = Depends(CommonsDependencies)  # type: ignore
-
-    @router.get("/users/me/games", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get games success"}})
-    async def get_all_games_status(self, pagination: PaginationParams = Depends()):
-        search_in = ["name", "code"]
-        results = await game_controllers.get_all_games_status(
-            query=pagination.query,
-            search=pagination.search,
-            search_in=search_in,
-            page=pagination.page,
-            limit=pagination.limit,
-            fields_limit=pagination.fields,
-            sort_by=pagination.sort_by,
-            order_by=pagination.order_by,
-            commons=self.commons,
-        )
-        if pagination.fields:
-            return results
-        return schemas.ListResponse(**results)
     
     @router.get("/games/public", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get games public success"}})
     async def get_all_games_public(self, pagination: PaginationParams = Depends()):
