@@ -8,31 +8,9 @@ from .exceptions import ErrorCode as GameErrorCode
 import random
 
 
-class GameManagers:
-    def __init__(self) -> None:
-        self.manager = {}
-
-    def add_game(self, game_id: str, host_id: str):
-        data = {'status': 'pending', 'host_id': host_id}
-        self.manager[game_id] = data
-
-    def set_game_is_waiting(self, game_id: str):
-        self.manager[game_id]['status'] = "waiting"
-
-    def set_game_is_in_progress(self, game_id: str, guest_id: str):
-        self.manager[game_id]["status"] = "in_progress"
-        self.manager[game_id]["guest_id"] = guest_id
-
-    def is_game_ready(self, game_id: str):
-        game = self.manager.get(game_id, {})
-        if game['status'] == "in_progress":
-            return game
-        return False
-
 class GameServices(BaseServices):
-    def __init__(self, service_name: str, managers: GameManagers, crud: BaseCRUD = None) -> None:
+    def __init__(self, service_name: str, crud: BaseCRUD = None) -> None:
         super().__init__(service_name, crud)
-        self.managers = managers
         
     async def create(self, data: schemas.CreateRequest, commons: CommonsDependencies) -> dict:
         generate_code = await self.generate_code()
@@ -48,7 +26,6 @@ class GameServices(BaseServices):
                 if record["status"] in ["waiting" ,"in_progress"]:
                     raise GameErrorCode.AlreadyGame()
         result = await self.save_unique(data=data_save, unique_field="code")
-        self.managers.add_manager(game_id=result["_id"], host_id=result["host_id"])
         return result
     
     async def edit(self, _id: str, data: schemas.EditRequest, commons: CommonsDependencies) -> dict:
@@ -68,30 +45,25 @@ class GameServices(BaseServices):
         if result:
             result[0]
         return None
-
-    async def add_game_to_managers(self, game_id: str, host_id: str):
-        self.managers.add_game(game_id=game_id, host_id=host_id)
         
     async def set_game_is_waiting(self, game_id: str) -> dict:
         data_update = {}
         data_update["status"] = "waiting"
         result = await self.update_by_id(_id=game_id, data=data_update)
-        self.managers.set_game_is_waiting(game_id=game_id)
         return result
     
     async def set_game_is_in_progress(self, game_id: str, guest_id: str) -> dict:
         data_update = {}
         data_update["status"] = "in_progress"
         data_update["guest_id"] = guest_id
-        print(data_update)
         result = await self.update_by_id(_id=game_id, data=data_update)
-        print(result)
-        self.managers.set_game_is_in_progress(game_id=game_id, guest_id=guest_id)
         return result
     
     async def is_game_ready(self, game_id: str):
-        return self.managers.is_game_ready(game_id=game_id)
+        game = await self.get_by_id(_id=game_id)
+        if game["status"] == "in_progress":
+            return game
+        return False
     
 game_crud = BaseCRUD(database_engine=app_engine, collection="games")
-game_managers = GameManagers()
-game_services = GameServices(service_name="games", crud=game_crud, managers=game_managers)
+game_services = GameServices(service_name="games", crud=game_crud)

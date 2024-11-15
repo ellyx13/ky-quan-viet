@@ -78,7 +78,6 @@ class GameControllers(BaseControllers):
             await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.GameIsNotAvailable(game_id=game_id))
             return await self.player_disconnected(game=game, current_user=commons.current_user)
         
-        await self.service.add_game_to_managers(game_id=game["_id"], host_id=game["host_id"])
         print(game)
         if game['status'] == "pending" and game['host_id'] == commons.current_user:
             await self.service.set_game_is_waiting(game_id=game["_id"])
