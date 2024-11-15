@@ -29,6 +29,15 @@ class GameControllers(BaseControllers):
                 "type": "public"
             })
         return await super().get_all(query, search, search_in, page, limit, fields_limit, sort_by, order_by, include_deleted, commons)
+
+    async def get_all_games_status(self, query = None, search = None, search_in = None, page = 1, limit = 20, fields_limit = None, sort_by = "created_at", order_by = "desc", include_deleted = False, commons = None):
+        user_id = self.get_current_user(commons=commons)
+        self.get_current_user
+        if query is not None:
+            query.update({
+                "created_by": user_id
+            })
+        return await super().get_all(query, search, search_in, page, limit, fields_limit, sort_by, order_by, include_deleted, commons)
     
     async def get_by_code(self, code: str, commons: CommonsDependencies = None, ignore_error: bool = False) -> dict:
         return await self.service.get_by_code(code=code, commons=commons, ignore_error=ignore_error)
