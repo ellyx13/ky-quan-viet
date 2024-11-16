@@ -29,7 +29,7 @@ class GameControllers(BaseControllers):
                 "type": "public"
             })
         return await super().get_all(query, search, search_in, page, limit, fields_limit, sort_by, order_by, include_deleted, commons)
-    
+
     async def get_by_code(self, code: str, commons: CommonsDependencies = None, ignore_error: bool = False) -> dict:
         return await self.service.get_by_code(code=code, commons=commons, ignore_error=ignore_error)
 

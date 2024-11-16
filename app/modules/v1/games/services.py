@@ -20,10 +20,10 @@ class GameServices(BaseServices):
         data["created_at"] = self.get_current_datetime()
         data_save = models.Games(**data).model_dump()
         # Check if the user has already created a game, they will not be allowed to create another one.
-        data_check = await self.crud.get_by_field(data=data_save["host_id"], field_name="host_id")
+        data_check = await self.get_by_field(data=data_save["host_id"], field_name="host_id", ignore_error=True)
         if data_check:
             for record in data_check:
-                if record["status"] in ["waiting" ,"in_progress"]:
+                if record["status"] in ["pending", "waiting", "in_progress"]:
                     raise GameErrorCode.AlreadyGame()
         result = await self.save_unique(data=data_save, unique_field="code")
         return result

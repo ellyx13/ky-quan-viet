@@ -15,7 +15,7 @@ router = InferringRouter(
 @cbv(router)
 class RoutersCBV:
     commons: CommonsDependencies = Depends(CommonsDependencies)  # type: ignore
-
+    
     @router.get("/games/public", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get games public success"}})
     async def get_all_games_public(self, pagination: PaginationParams = Depends()):
         search_in = ["name", "code"]
