@@ -274,7 +274,10 @@ class BaseCRUD:
         fields_limit = await self.build_field_projection(fields_limit=fields_limit)
         if not query:
             query = {}
-        query.update({field_name: data})
+        if data.isnumeric():
+            query.update({field_name: int(data)})
+        else:
+            query.update({field_name: data})
         query = self.replace_special_chars(value=query)
         documents = self.collection.find(filter=query, projection=fields_limit)
         results = []
