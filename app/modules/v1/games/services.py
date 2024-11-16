@@ -5,6 +5,7 @@ from db.engine import app_engine
 
 from . import models, schemas
 from .exceptions import ErrorCode as GameErrorCode 
+from modules.v1.histories.services import history_services
 import random
 
 
@@ -55,6 +56,7 @@ class GameServices(BaseServices):
     async def set_game_is_in_progress(self, game_id: str, guest_id: str) -> dict:
         data_update = {}
         data_update["status"] = "in_progress"
+        data_update["start_at"] = self.get_current_datetime()
         data_update["guest_id"] = guest_id
         result = await self.update_by_id(_id=game_id, data=data_update)
         return result
@@ -64,6 +66,16 @@ class GameServices(BaseServices):
         if game["status"] == "in_progress":
             return game
         return False
+    
+    async def set_game_is_completed(self, game_id: str, winner_id: str) -> dict:
+        game = await self.get_by_id(_id=game_id)
+        data_update = {}
+        data_update["status"] = "completed"
+        data_update["end_at"] = self.get_current_datetime()
+        result = await self.update_by_id(_id=game_id, data=data_update)
+        duration = (data_update["end_at"] - game["start_at"]).seconds
+        await history_services.create(game_id=game_id, winner_id=winner_id, duration=duration, commons=None)
+        return result
     
 game_crud = BaseCRUD(database_engine=app_engine, collection="games")
 game_services = GameServices(service_name="games", crud=game_crud)
