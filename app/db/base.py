@@ -274,7 +274,7 @@ class BaseCRUD:
         fields_limit = await self.build_field_projection(fields_limit=fields_limit)
         if not query:
             query = {}
-        if data.isnumeric():
+        if isinstance(data, str) and data.isnumeric():
             query.update({field_name: int(data)})
         else:
             query.update({field_name: data})
