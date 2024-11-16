@@ -58,8 +58,6 @@ class GameServices(BaseServices):
         data_update["status"] = "in_progress"
         data_update["guest_id"] = guest_id
         result = await self.edit(_id=game_id, data=data_update, commons=commons)
-        self.managers.set_game_is_in_progress(game_id=game_id, guest_id=guest_id)
-        result = await self.update_by_id(_id=game_id, data=data_update)
         return result
     
     async def is_game_ready(self, game_id: str):
