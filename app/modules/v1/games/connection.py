@@ -1,4 +1,4 @@
-from fastapi import WebSocket
+from fastapi import WebSocket, WebSocketException
 import json
 
 class ConnectionManager:
@@ -6,7 +6,6 @@ class ConnectionManager:
         self.active_connections: dict[str, WebSocket] = {}
 
     async def connect(self, user_id: str, websocket: WebSocket):
-        await websocket.accept()
         self.active_connections[user_id] = websocket
 
     async def disconnect(self, user_id: str, is_close: bool = True):
@@ -38,9 +37,14 @@ class ConnectionManager:
         except Exception:
             return None
 
-    async def raise_error(self, user_id: str, error: dict):
-        websocket = self.active_connections.get(user_id)
-        if websocket:
-            await self.send_data(user_id=user_id, data=error)
+    async def raise_error(self, error: dict, user_id: str = None, websocket: WebSocket = None):
+        if user_id:
+            websocket = self.active_connections.get(user_id)
+            if websocket:
+                await self.send_data(user_id=user_id, data=error)
+                self.active_connections.pop(user_id, None)
+        elif websocket:
+            await websocket.send_json(data=error)
+        raise WebSocketException(code=1010, reason="Disconnected because error.")
         
 manager = ConnectionManager()

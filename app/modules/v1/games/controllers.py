@@ -41,7 +41,7 @@ class GameControllers(BaseControllers):
         else:
             await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.RequiredFieldToJoinGame())
         if game is None:
-            await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.GameNotFound())
+            await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.GameNotFound(game_id=game_id, game_code=game_code))
         return game
 
     async def get_other_player(self, game: dict, current_user: str):
@@ -55,12 +55,12 @@ class GameControllers(BaseControllers):
             return True
         return False
 
-    async def player_disconnected(self, game: dict, current_user: str, is_close=True):
+    async def player_disconnected(self, game: dict, current_user: str):
         another_player = await self.get_other_player(game=game, current_user=current_user)
         player = "Guest" if self.is_guest_in_game(game=game, current_user=current_user) else "Host"
-        data = {"message": f"{player} has left the game."}
+        data = {"message": f"{player} has left the game, so you win."}
         await manager.send_data(user_id=another_player, data=data)
-        await manager.disconnect(user_id=current_user, is_close=is_close)
+        await manager.disconnect(user_id=current_user)
         
     async def game_is_ready_to_start(self, game: dict, commons: CommonsDependencies):
         message = "Game is ready. You can start playing."
@@ -72,13 +72,10 @@ class GameControllers(BaseControllers):
         
     async def join_room(self, websocket, game_id: str = None, game_code: str = None, commons: CommonsDependencies = None):
         await manager.connect(commons.current_user, websocket)
-
-        game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code)
-        if game is None or game['status'] not in ["pending", "waiting"]:
+        game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code, commons=commons)
+        if game['status'] not in ["pending", "waiting"]:
             await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.GameIsNotAvailable(game_id=game_id))
-            return await self.player_disconnected(game=game, current_user=commons.current_user)
-        
-        print(game)
+            
         if game['status'] == "pending" and game['host_id'] == commons.current_user:
             await self.service.set_game_is_waiting(game_id=game["_id"])
             await self.waiting_for_other_player(user_id=commons.current_user)
@@ -89,7 +86,6 @@ class GameControllers(BaseControllers):
             await self.waiting_for_other_player(user_id=commons.current_user)
         else:
             await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.CanNotJoinGame())
-            return await self.player_disconnected(game=game, current_user=commons.current_user)
             
         try:
             while True:
@@ -102,7 +98,7 @@ class GameControllers(BaseControllers):
                 other_player = await self.get_other_player(game=game, current_user=commons.current_user)
                 await manager.send_data(user_id=other_player, data=data)
         except WebSocketDisconnect:
-            await self.player_disconnected(game=game, current_user=commons.current_user, is_close=False)
+            await self.player_disconnected(game=game, current_user=commons.current_user)
         
 
 game_controllers = GameControllers(controller_name="games", service=game_services)
