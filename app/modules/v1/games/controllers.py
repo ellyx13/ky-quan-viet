@@ -56,6 +56,7 @@ class GameControllers(BaseControllers):
         return False
 
     async def player_disconnected(self, game: dict, current_user: str):
+    async def player_disconnected(self, game: dict, current_user: str):
         another_player = await self.get_other_player(game=game, current_user=current_user)
         player = "Guest" if self.is_guest_in_game(game=game, current_user=current_user) else "Host"
         data = {"message": f"{player} has left the game, so you win."}
@@ -91,6 +92,7 @@ class GameControllers(BaseControllers):
             while True:
                 data = await websocket.receive_text()
                 game = await self.get_by_room(websocket=websocket, game_id=game_id, game_code=game_code)
+                game = await self.get_by_room(websocket=websocket, game_id=game_id, game_code=game_code)
                 is_game_ready = await self.service.is_game_ready(game_id=game["_id"])
                 if is_game_ready is False:
                     await self.waiting_for_other_player(user_id=commons.current_user)
@@ -98,6 +100,7 @@ class GameControllers(BaseControllers):
                 other_player = await self.get_other_player(game=game, current_user=commons.current_user)
                 await manager.send_data(user_id=other_player, data=data)
         except WebSocketDisconnect:
+            await self.player_disconnected(game=game, current_user=commons.current_user)
             await self.player_disconnected(game=game, current_user=commons.current_user)
         
 
