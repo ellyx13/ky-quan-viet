@@ -74,3 +74,57 @@ class ErrorCodeSocket:
         response["title"] = "Invalid ID format."
         response["detail"] = f"The id {_id} is not a valid object id. Please provide a valid object id and try again."
         return response
+    
+    @staticmethod
+    def NotYourTurn():
+        response = {}
+        response["type"] = "games/warning/not-your-turn"
+        response["status"] = 400
+        response["title"] = "Not your turn."
+        response["detail"] = "It is not your turn to play the game. Please wait for the other player to make a move."
+        return response
+    
+    @staticmethod
+    def WaitingForOtherPlayer():
+        response = {}
+        response["type"] = "games/info/waiting-for-other-player"
+        response["status"] = 431
+        response["title"] = "Waiting for other player."
+        response["detail"] = "You are waiting for the other player to join the game."
+        return response
+    
+    @staticmethod
+    def GameIsReadyToStart():
+        response = {}
+        response["type"] = "games/info/game-is-ready"
+        response["status"] = 432
+        response["title"] = "Game is ready."
+        response["detail"] = "Game is ready. You can start playing."
+        return response
+    
+    @staticmethod
+    def YouWinBecauseOtherPlayerLeft():
+        response = {}
+        response["type"] = "games/info/you-win"
+        response["status"] = 433
+        response["title"] = "You win."
+        response["detail"] = "You win the game because the other player has left the game."
+        return response
+    
+    @staticmethod
+    def YouWin():
+        response = {}
+        response["type"] = "games/info/you-win"
+        response["status"] = 434
+        response["title"] = "You win."
+        response["detail"] = "You win the game."
+        return response
+    
+    @staticmethod
+    def YouLost():
+        response = {}
+        response["type"] = "games/info/you-lost"
+        response["status"] = 435
+        response["title"] = "You lost."
+        response["detail"] = "You lost the game."
+        return response

@@ -66,5 +66,15 @@ class GameServices(BaseServices):
             return game
         return False
     
+    async def set_game_is_completed(self, game_id: str, winner_id: str, commons: CommonsDependencies) -> dict:
+        game = await self.get_by_id(_id=game_id)
+        data_update = {}
+        data_update["status"] = "completed"
+        data_update["end_at"] = self.get_current_datetime()
+        duration = int((data_update["end_at"] - game["start_at"]).total_seconds())
+        result = await self.edit(_id=game_id, data=data_update, commons=commons)
+        await history_services.create(game_id=game_id, winner_id=winner_id, duration=duration, commons=commons)
+        return result
+    
 game_crud = BaseCRUD(database_engine=app_engine, collection="games")
 game_services = GameServices(service_name="games", crud=game_crud)
