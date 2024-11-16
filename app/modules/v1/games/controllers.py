@@ -35,9 +35,9 @@ class GameControllers(BaseControllers):
 
     async def get_by_room(self, websocket, game_id: str = None, game_code: str = None, commons: CommonsDependencies = None):
         if game_id:
-            game = await self.get_by_id(_id=game_id, commons=commons, ignore_error=True)
+            game = await self.get_by_id(_id=game_id, ignore_error=True)
         elif game_code:
-            game = await self.get_by_code(code=game_code, commons=commons, ignore_error=True)
+            game = await self.get_by_code(code=game_code, ignore_error=True)
         else:
             await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.RequiredFieldToJoinGame())
         if game is None:
