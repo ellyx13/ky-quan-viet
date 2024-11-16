@@ -43,7 +43,7 @@ class GameServices(BaseServices):
     async def get_by_code(self, code: str, commons: CommonsDependencies = None, ignore_error: bool = False) -> dict | None:
         result = await self.get_by_field(data=code, field_name="code", commons=commons, ignore_error=ignore_error)
         if result:
-            result[0]
+            return result[0]
         return None
         
     async def set_game_is_waiting(self, game_id: str) -> dict:
