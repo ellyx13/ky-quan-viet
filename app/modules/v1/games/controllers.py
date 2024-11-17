@@ -73,8 +73,15 @@ class GameControllers(BaseControllers):
         other_player = await self.get_other_player(game=game, current_user=commons.current_user)
         await manager.send_data(user_id=other_player, data=data)
         
+    async def get_next_turn(self, game: dict, current_user: str):
+        if game['host_id'] == current_user:
+            return "guest"
+        elif game['guest_id'] == current_user:
+            return "host"
+        
     async def send_state_to_both_players(self, game: dict, state: list, commons: CommonsDependencies):
         data = {'state': state}
+        data['turn'] = await self.get_next_turn(game=game, current_user=commons.current_user)
         other_player = await self.get_other_player(game=game, current_user=commons.current_user)
         await manager.send_data(user_id=other_player, data=data)
         await manager.send_data(user_id=commons.current_user, data=data)
