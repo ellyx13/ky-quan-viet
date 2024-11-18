@@ -188,7 +188,7 @@ class GameControllers(BaseControllers):
                         await self.notify_winner(game=game, winner_id=commons.current_user)
                         return
         except WebSocketDisconnect:
-            game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code)
+            game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code, commons=commons)
             if game["status"] == "completed":
                 return
             other_player = await self.get_other_player(game=game, current_user=commons.current_user)
@@ -245,7 +245,7 @@ class GameControllers(BaseControllers):
                     return
                 player = "AI" if player == commons.current_user else commons.current_user
         except WebSocketDisconnect:
-            game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code)
+            game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code, commons=commons)
             if game["status"] == "completed":
                 return
             await self.service.set_game_is_completed(game_id=game["_id"], winner_id="AI", commons=commons)
