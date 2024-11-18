@@ -199,8 +199,8 @@ async def find_best_move(state):
         print("After Player 2's move:")
         print("Score: ", score)
         print(state)
-        state.append(score['player1'])
-        state.append(score['player2'])
+        state[12] = score['player1']
+        state[13] = score['player2']
         result['state'] = state
         result['move'] = move
         result['direction'] = "cw" if direction == "left" else "ccw"
