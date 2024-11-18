@@ -86,11 +86,12 @@ class GameControllers(BaseControllers):
             await manager.send_data(user_id=commons.current_user, data=data)
         
     async def get_next_turn(self, game: dict, current_user: str, is_move_back: bool = False, is_room_ai: bool = False):
-        guest_player = "guest" if is_room_ai is False else "AI"
+        if is_room_ai is True:
+            return "AI"
         if game['host_id'] == current_user:
-            return guest_player if is_move_back is False else "host"
+            return "guest" if is_move_back is False else "host"
         elif game['guest_id'] == current_user:
-            return "host" if is_move_back is False else guest_player
+            return "host" if is_move_back is False else "guest"
             
     async def send_state_to_both_players(self, game: dict, state: list, commons: CommonsDependencies):
         data = {'state': state}
