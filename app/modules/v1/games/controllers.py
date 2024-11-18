@@ -70,6 +70,7 @@ class GameControllers(BaseControllers):
     
     async def send_state_to_other_player(self, game: dict, state: list, commons: CommonsDependencies):
         data = {'state': state}
+        data['turn'] = await self.get_next_turn(game=game, current_user=commons.current_user)
         other_player = await self.get_other_player(game=game, current_user=commons.current_user)
         await manager.send_data(user_id=other_player, data=data)
         
@@ -138,7 +139,6 @@ class GameControllers(BaseControllers):
                     await self.move_back(game=game, commons=commons)
                 elif data.get('state'):
                     await move_controllers.create(game_id=game["_id"], player_id=commons.current_user, state=data["state"], commons=commons)
-                    data['turn'] = await self.get_next_turn(game=game, current_user=commons.current_user)
                     await self.send_state_to_other_player(game=game, state=data["state"], commons=commons)
                     is_win = await self.is_win(data["state"])
                     if is_win is True:
