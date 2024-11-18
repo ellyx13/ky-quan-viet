@@ -112,7 +112,7 @@ class GameControllers(BaseControllers):
         
     async def get_next_turn(self, game: dict, current_user: str, is_move_back: bool = False, is_room_ai: bool = False):
         if is_room_ai is True:
-            return "AI"
+            return "host"
         if game['host_id'] == current_user:
             return "guest" if is_move_back is False else "host"
         elif game['guest_id'] == current_user:
