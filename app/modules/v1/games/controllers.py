@@ -129,10 +129,10 @@ class GameControllers(BaseControllers):
             await manager.raise_error(user_id=commons.current_user, error=GameErrorCodeSocket.GameIsNotAvailable(game_id=game_id))
             
         if game['status'] == "pending" and game['host_id'] == commons.current_user:
-            await self.service.set_game_is_waiting(game_id=game["_id"])
+            game = await self.service.set_game_is_waiting(game_id=game["_id"])
             await self.waiting_for_other_player(user_id=commons.current_user)
         elif game['status'] == "waiting" and game['host_id'] != commons.current_user:
-            await self.service.set_game_is_in_progress(game_id=game["_id"], guest_id=commons.current_user, commons=commons)
+            game = await self.service.set_game_is_in_progress(game_id=game["_id"], guest_id=commons.current_user, commons=commons)
             await self.game_is_ready_to_start(game=game, commons=commons, is_room_ai=False)
         elif game['status'] == "waiting" and game['host_id'] == commons.current_user:
             await self.waiting_for_other_player(user_id=commons.current_user)
