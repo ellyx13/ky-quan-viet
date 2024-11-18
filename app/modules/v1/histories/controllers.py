@@ -39,5 +39,15 @@ class HistoryControllers(BaseControllers):
             history['is_host_win'] = await self.is_host_win(game_id=history['game_id'], winner=history['winner'])
         return histories
     
+    async def get_total_game_win(self, user_id: str) -> int:
+        query = {"winner": user_id}
+        results = await game_controllers.get_all(query=query)
+        return results['total_items']
+    
+    async def get_total_game_lose(self, user_id: str) -> int:
+        total_games = await game_controllers.get_total_game_of_user(user_id=user_id)
+        total_win = await self.get_total_game_win(user_id=user_id)
+        return total_games - total_win
+    
 
 history_controllers = HistoryControllers(controller_name="history", service=history_services)

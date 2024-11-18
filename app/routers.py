@@ -6,6 +6,7 @@ from modules.v1.games import socket as games_socket
 from modules.v1.moves import routers as moves_routers
 from modules.v1.histories import routers as histories_routers
 from users import routers as users_routers
+from modules.v1.leaderboard import routers as leaderboard_routers
 
 api_routers = APIRouter()
 
@@ -28,3 +29,6 @@ api_routers.include_router(moves_routers.router)
 
 # Modules
 api_routers.include_router(histories_routers.router)
+
+# Modules
+api_routers.include_router(leaderboard_routers.router)

@@ -20,6 +20,11 @@ class GameControllers(BaseControllers):
         data = data.model_dump()
         return await self.service.create(data=data, commons=commons)
     
+    async def get_total_game_of_user(self, user_id: str) -> list:
+        query = {"$or": [{"host_id": user_id}, {"guest_id": user_id}]}
+        results = await self.get_all(query=query)
+        return results['total_items']
+    
     async def get_name(self, game_id: str) -> dict:
         result = await self.get_by_id(_id=game_id)
         return result['name']
