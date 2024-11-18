@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 class Moves(BaseModel):
     game_id: ObjectIdStr
-    player_id: ObjectIdStr
+    player_id: str
     move_number: int
     state: list
     created_at: datetime

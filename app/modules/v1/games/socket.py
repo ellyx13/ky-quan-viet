@@ -28,3 +28,15 @@ async def websocket_endpoint(websocket: WebSocket, token: Annotated[str, Depends
     websocket.state.payload = token
     commons = CommonsDependencies.build_from_payload(payload=token)
     await game_controllers.join_room(websocket=websocket, game_id=game_id, game_code=game_code, commons=commons)
+    
+    
+@router.websocket("/games/room/ai")
+async def websocket_endpoint(websocket: WebSocket, token: Annotated[str, Depends(check_authentication)], game_id: str = None, game_code: str = None):
+    if game_id:
+        try:
+            game_id = check_object_id(game_id)
+        except Exception:
+            await manager.raise_error(websocket=websocket, error=GameErrorCodeSocket.InvalidObjectId(_id=game_id))
+    websocket.state.payload = token
+    commons = CommonsDependencies.build_from_payload(payload=token)
+    await game_controllers.join_room_ai(websocket=websocket, game_id=game_id, game_code=game_code, commons=commons)

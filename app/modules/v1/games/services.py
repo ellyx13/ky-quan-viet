@@ -52,11 +52,12 @@ class GameServices(BaseServices):
         result = await self.update_by_id(_id=game_id, data=data_update)
         return result
     
-    async def set_game_is_in_progress(self, game_id: str, guest_id: str, commons: CommonsDependencies) -> dict:
+    async def set_game_is_in_progress(self, game_id: str, commons: CommonsDependencies, guest_id: str = None) -> dict:
         data_update = {}
         data_update['start_at'] = self.get_current_datetime()
         data_update["status"] = "in_progress"
-        data_update["guest_id"] = guest_id
+        if guest_id:
+            data_update["guest_id"] = guest_id
         result = await self.edit(_id=game_id, data=data_update, commons=commons)
         return result
     

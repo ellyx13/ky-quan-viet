@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class Histories(BaseModel):
     game_id: ObjectIdStr
     score: int
-    winner: ObjectIdStr
+    winner: str
     duration: int
     created_at: datetime
     created_by: ObjectIdStr

@@ -128,3 +128,21 @@ class ErrorCodeSocket:
         response["title"] = "You lost."
         response["detail"] = "You lost the game."
         return response
+    
+    @staticmethod
+    def IsNotRoomAI():
+        response = {}
+        response["type"] = "games/warning/not-room-ai"
+        response["status"] = 400
+        response["title"] = "Not room AI."
+        response["detail"] = f"The game is not a room AI."
+        return response
+    
+    @staticmethod
+    def YouAreNotHostInRoom():
+        response = {}
+        response["type"] = "games/warning/not-host-in-room"
+        response["status"] = 400
+        response["title"] = "Cannot join room."
+        response["detail"] = "You are not the host in the room."
+        return response

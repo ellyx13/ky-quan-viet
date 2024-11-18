@@ -70,7 +70,7 @@ def is_empty(state, player):
 
     return all(cell == "" for cell in region)
 
-def redistribute_from_score(state, player):
+def redistribute_from_score(state, player, score):
     """
     Rải tối đa 5 quân từ điểm số của người chơi vào các ô trống trên bàn cờ.
     state: Trạng thái bàn cờ hiện tại.
@@ -167,54 +167,23 @@ def minimax(state, depth, maximizing_player, alpha, beta, score):
                         break  # Cắt tỉa
         return min_eval, best_move
 
-
-# Trạng thái ban đầu của bàn cờ
-state = ["1", "00000", "00000", "00000", "00000", "00000", "2", "00000", "00000", "00000", "00000", "00000"]
-
-print("Initial state:")
-print(state)
-depth = 10
-score = {"player1": "", "player2": ""}  # Khởi tạo điểm số
-# Chơi 2 người
-while True:
-    # Người chơi 1 chọn nước đi
-    if is_empty(state, "player1"):
-        print("Player 1's board is empty! Redistributing pieces from score...")
-        is_can_redistribute = redistribute_from_score(state, "player1")
-        if is_can_redistribute is False:
-            print("Player 1 can't redistribute any more pieces! Player 2 wins!")
-            break
-        print("State after redistribution (Player 1):")
-        print(state)
-    # Người chơi 1 thực hiện nước đi
-    move = int(input("Player 1: Choose a hole (7-11): "))
-    direction = input("Player 1: Choose direction (ccw/cw): ").strip()
-    if direction == "ccw":
-        direction = "right"
-    else:
-        direction = "left"
-    state = apply_move(state, move, direction, score)
-    print("After Player 1's move:")
-    print("Score: ", score)
-    print(state)
-
-    # Kiểm tra kết thúc
-    if state[0] == "" and state[6] == "":
-        print("Game over!")
-        print("Final state:")
-        print(state)
-        print("Final scores:")
-        print("Player 1:", score["player1"])
-        print("Player 2:", score["player2"])
-        break
-
+async def find_best_move(state):
+    depth = 5
+    score = {}
+    # Player1 is Host. Player2 is AI
+    score["player1"] = state[12]
+    score["player2"] = state[13]
+    
+    result = {}
+    
     # Player 2 (AI) chọn nước đi
     if is_empty(state, "player2"):
         print("Player 2's board is empty! Redistributing pieces from score...")
-        is_can_redistribute = redistribute_from_score(state, "player2")
+        is_can_redistribute = redistribute_from_score(state, "player2", score)
         if is_can_redistribute is False:
             print("Player 2 can't redistribute any more pieces! Player 1 wins!")
-            break
+            result['winner'] = "player1"
+            return result
         print("State after redistribution (Player 2):")
         print(state)
 
@@ -230,9 +199,11 @@ while True:
         print("After Player 2's move:")
         print("Score: ", score)
         print(state)
-    else:
-        print("No valid moves for Player 2!")
-        break
+        state.append(score['player1'])
+        state.append(score['player2'])
+        result['state'] = state
+        result['move'] = move
+        result['direction'] = "cw" if direction == "left" else "ccw"
 
     # Kiểm tra kết thúc
     if state[0] == "" and state[6] == "":
@@ -242,4 +213,5 @@ while True:
         print("Final scores:")
         print("Player 1:", score["player1"])
         print("Player 2:", score["player2"])
-        break
+        result['is_ai_win'] = True
+    return result
