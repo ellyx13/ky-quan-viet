@@ -215,7 +215,8 @@ class GameControllers(BaseControllers):
                 if player != "AI":
                     data = manager.parse_dict(data)
                 await move_controllers.create(game_id=game["_id"], player_id=player, state=data["state"], commons=commons)
-                await self.send_state_to_other_player(game=game, data=data, commons=commons, is_room_ai=True)
+                if player == "AI":
+                    await self.send_state_to_other_player(game=game, data=data, commons=commons, is_room_ai=True)
                 is_win = await self.is_win(data["state"])
                 if is_win is True:
                     await self.service.set_game_is_completed(game_id=game["_id"], winner_id=player, commons=commons)
