@@ -30,6 +30,10 @@ class UserControllers(BaseControllers):
         # Convert the Pydantic model 'data' to a dictionary, excluding any fields with None values.
         data = data.model_dump(exclude_none=True)
         return await self.service.edit(_id=_id, data=data, commons=commons)
+    
+    async def get_name(self, user_id: str) -> dict:
+        result = await self.get_by_id(_id=user_id)
+        return result['fullname']
 
 
 user_controllers = UserControllers(controller_name="users", service=user_services)

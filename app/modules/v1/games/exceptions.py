@@ -94,12 +94,14 @@ class ErrorCodeSocket:
         return response
     
     @staticmethod
-    def GameIsReadyToStart():
+    def GameIsReadyToStart(player_info: dict = None):
         response = {}
         response["type"] = "games/info/game-is-ready"
         response["status"] = 432
         response["title"] = "Game is ready."
         response["detail"] = "Game is ready. You can start playing."
+        if player_info:
+            response.update(player_info)
         return response
     
     @staticmethod

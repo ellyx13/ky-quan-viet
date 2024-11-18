@@ -10,6 +10,7 @@ from .connection import manager
 from fastapi import WebSocketDisconnect
 from modules.v1.moves.controllers import move_controllers
 from modules.v1.minimax.services import find_best_move
+from users.controllers import user_controllers
 
 class GameControllers(BaseControllers):
     def __init__(self, controller_name: str, service: BaseServices = None) -> None:
@@ -69,8 +70,13 @@ class GameControllers(BaseControllers):
         if is_room_ai is True:
             await manager.send_data(user_id=commons.current_user, data=GameErrorCodeSocket.GameIsReadyToStart())
         else:
-            await manager.send_data(user_id=commons.current_user, data=GameErrorCodeSocket.GameIsReadyToStart())
-            await manager.send_data(user_id=game['host_id'], data=GameErrorCodeSocket.GameIsReadyToStart())
+            player_info = {}
+            player_info['host_id'] = game['host_id']
+            player_info['guest_id'] = game['guest_id']
+            player_info['host_name'] = await user_controllers.get_name(user_id=game['host_id'])
+            player_info['guest_name'] = await user_controllers.get_name(user_id=game['guest_id'])
+            await manager.send_data(user_id=commons.current_user, data=GameErrorCodeSocket.GameIsReadyToStart(player_info))
+            await manager.send_data(user_id=game['host_id'], data=GameErrorCodeSocket.GameIsReadyToStart(player_info))
         
     async def waiting_for_other_player(self, user_id: str):
         await manager.send_data(user_id=user_id, data=GameErrorCodeSocket.WaitingForOtherPlayer())
@@ -114,7 +120,7 @@ class GameControllers(BaseControllers):
             await self.waiting_for_other_player(user_id=commons.current_user)
         elif game['status'] == "waiting" and game['host_id'] != commons.current_user:
             await self.service.set_game_is_in_progress(game_id=game["_id"], guest_id=commons.current_user, commons=commons)
-            await self.game_is_ready_to_start(game=game, commons=commons)
+            await self.game_is_ready_to_start(game=game, commons=commons, is_room_ai=False)
         elif game['status'] == "waiting" and game['host_id'] == commons.current_user:
             await self.waiting_for_other_player(user_id=commons.current_user)
         else:
