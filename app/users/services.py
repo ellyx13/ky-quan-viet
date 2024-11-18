@@ -86,6 +86,14 @@ class UserServices(BaseServices):
         data["updated_by"] = self.get_current_user(commons=commons)
         return await self.update_by_id(_id=_id, data=data)
 
+    async def increase_score(self, user_id: str, commons: CommonsDependencies) -> dict:
+        user = await self.get_by_id(_id=user_id)
+        if isinstance(user.get("score"), int):
+            user["score"] += settings.default_score
+        else:
+            user["score"] = settings.default_score
+        data_update = {"score": user["score"]}
+        return await self.edit(_id=user_id, data=data_update, commons=commons)
 
 user_crud = BaseCRUD(database_engine=app_engine, collection="users")
 user_services = UserServices(service_name="users", crud=user_crud)

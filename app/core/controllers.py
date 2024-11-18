@@ -1,6 +1,7 @@
 from core.schemas import CommonsDependencies
 
 from .services import BaseServices
+from . import config
 
 NOT_DECLARED_SERVICE = "Service must be an instance of BaseServices. Maybe the service has not been declared when creating the class Controllers"
 
@@ -25,7 +26,7 @@ class BaseControllers:
     def __init__(self, controller_name: str, service: BaseServices = None) -> None:
         self.controller_name = controller_name
         self.service = service
-        self.max_record_limit = self.service.maximum_document_limit
+        self.max_record_limit = self.service.maximum_document_limit if service else config.MAXIMUM_DOCUMENT_LIMIT
 
     async def get_all(
         self,

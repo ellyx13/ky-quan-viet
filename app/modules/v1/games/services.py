@@ -7,6 +7,7 @@ from . import models, schemas
 from .exceptions import ErrorCode as GameErrorCode 
 import random
 from modules.v1.histories.services import history_services
+from users.services import user_services
 
 class GameServices(BaseServices):
     def __init__(self, service_name: str, crud: BaseCRUD = None) -> None:
@@ -75,6 +76,8 @@ class GameServices(BaseServices):
         duration = int((data_update["end_at"] - game["start_at"]).total_seconds())
         result = await self.edit(_id=game_id, data=data_update, commons=commons)
         await history_services.create(game_id=game_id, winner_id=winner_id, duration=duration, commons=commons)
+        if winner_id != "AI":
+            await user_services.increase_score(user_id=winner_id, commons=commons)
         return result
     
 game_crud = BaseCRUD(database_engine=app_engine, collection="games")

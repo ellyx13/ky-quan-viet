@@ -70,7 +70,8 @@ class GameControllers(BaseControllers):
             return game['guest_id']
         elif game['guest_id'] == current_user:
             return game['host_id']
-        
+        return current_user
+    
     def is_guest_in_game(self, game: dict, current_user: str):
         if game['guest_id'] == current_user:
             return True
