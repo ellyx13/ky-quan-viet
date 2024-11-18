@@ -11,6 +11,11 @@ class LeaderboardControllers(BaseControllers):
     
     # Overload function get_all of history, this function just get_all of games have user join game and completed game.
     async def get_all(self, query = None, search = None, search_in = None, page = 1, limit = 20, fields_limit = None, sort_by = "score", order_by = "desc", include_deleted = False, commons = None):
+        if query is None:
+            query = {}
+            query['score'] = ['$ne', None]
+        else:
+            query.update({'score': {'$ne': None}})
         results = await user_controllers.get_all(query=query, search=search, search_in=search_in, page=page, limit=limit, fields_limit=fields_limit, sort_by=sort_by, order_by=order_by, include_deleted=include_deleted, commons=commons)
         for result in results["results"]:
             result['total_win'] = await history_controllers.get_total_game_win(user_id=result['_id'])

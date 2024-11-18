@@ -83,7 +83,7 @@ class GameControllers(BaseControllers):
         else:
             other_player = await self.get_other_player(game=game, current_user=current_user)
             await manager.send_data(user_id=other_player, data=GameErrorCodeSocket.YouWinBecauseOtherPlayerLeft())
-            await manager.disconnect(user_id=current_user)
+            await manager.disconnect(user_id=current_user, is_close=False)
         
     async def game_is_ready_to_start(self, game: dict, commons: CommonsDependencies, is_room_ai: bool = False):
         if is_room_ai is True:

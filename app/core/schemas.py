@@ -86,7 +86,7 @@ class PaginationParams:
         self.limit = limit
         self.fields = fields
         self.sort_by = sort_by
-        self.order_by = order_by
+        self.order_by = order_by.value
 
 
 def check_object_id(value: str) -> str:
