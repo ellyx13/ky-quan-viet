@@ -19,6 +19,19 @@ class GameControllers(BaseControllers):
     async def create(self, data: schemas.CreateRequest, commons: CommonsDependencies) -> dict:
         data = data.model_dump()
         return await self.service.create(data=data, commons=commons)
+    
+    async def get_name(self, game_id: str) -> dict:
+        result = await self.get_by_id(_id=game_id)
+        return result['name']
+    
+    async def get_guest_name(self, game_id: str) -> str | None:
+        result = await self.get_by_id(_id=game_id)
+        guest_id = result['guest_id']
+        if guest_id is None:
+            return None
+        if guest_id == "AI":
+            return "AI"
+        return await user_controllers.get_name(user_id=guest_id)
 
     async def edit(self, _id: str, data: schemas.EditRequest, commons: CommonsDependencies) -> dict:
         await self.get_by_id(_id=_id, commons=commons)

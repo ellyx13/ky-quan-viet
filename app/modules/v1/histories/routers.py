@@ -17,8 +17,8 @@ router = InferringRouter(
 class RoutersCBV:
     commons: CommonsDependencies = Depends(CommonsDependencies)  # type: ignore
 
-    @router.get("/users/{user_id}/histories", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get histories success"}})
-    async def get_all(self, user_id: ObjectIdStr, pagination: PaginationParams = Depends()):
+    @router.get("/users/me/histories", status_code=200, responses={200: {"model": schemas.ListResponse, "description": "Get histories success"}})
+    async def get_all(self, pagination: PaginationParams = Depends()):
         search_in = []
         results = await history_controllers.get_all(
             query=pagination.query,
@@ -29,7 +29,6 @@ class RoutersCBV:
             fields_limit=pagination.fields,
             sort_by=pagination.sort_by,
             order_by=pagination.order_by,
-            user_id=user_id,
             commons=self.commons,
         )
         if pagination.fields:

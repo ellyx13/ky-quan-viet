@@ -12,6 +12,9 @@ class Response(BaseModel):
     score: int
     winner: str
     duration: int
+    game_name: Optional[str] = None
+    guest_name: Optional[str] = None
+    is_host_win: Optional[bool] = None
     created_at: datetime
     created_by: str
 
