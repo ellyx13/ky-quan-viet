@@ -9,6 +9,7 @@ class CreateRequest(BaseModel):
     name: str
     is_guest_ai: Optional[bool] = False
     type: Literal["public", "private"]
+    level: Optional[Literal["easy", "medium", "hard"]] = None
 
 
 class Response(BaseModel):
@@ -20,6 +21,7 @@ class Response(BaseModel):
     is_guest_ai: Optional[bool] = None
     status: str
     type: str
+    level: Optional[str] = None
     start_at: Optional[str] = None
     end_at: Optional[str] = None
     created_at: datetime

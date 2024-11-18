@@ -167,8 +167,14 @@ def minimax(state, depth, maximizing_player, alpha, beta, score):
                         break  # Cắt tỉa
         return min_eval, best_move
 
-async def find_best_move(state):
-    depth = 5
+async def find_best_move(state, game_level):
+    if game_level == "medium":
+        depth = 5
+    elif game_level == "hard":
+        depth = 8
+    else:
+        depth = 2
+
     score = {}
     # Player1 is Host. Player2 is AI
     score["player1"] = state[12]

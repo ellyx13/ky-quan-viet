@@ -13,6 +13,7 @@ class Games(BaseModel):
     is_guest_ai: Optional[bool] = False
     status: Literal["pending", "waiting", "in_progress", "completed"]
     type: Literal["public", "private"]
+    level: Optional[Literal["easy", "medium", "hard"]] = None
     start_at: Optional[datetime] = None
     end_at: Optional[datetime] = None
     created_at: datetime

@@ -196,12 +196,13 @@ class GameControllers(BaseControllers):
     async def join_room_ai(self, websocket, game_id: str = None, game_code: str = None, commons: CommonsDependencies = None):
         await manager.connect(commons.current_user, websocket)
         game = await self.verify_game_ai(websocket, game_id=game_id, game_code=game_code, commons=commons)
+        game_level = game.get('level', 'easy')
         is_win = False
         player = commons.current_user
         try:
             while True:
                 if player == "AI":
-                    data = await find_best_move(state=data['state'])
+                    data = await find_best_move(state=data['state'], game_level=game_level)
                 else:
                     data = await websocket.receive_text()
                 game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code)
