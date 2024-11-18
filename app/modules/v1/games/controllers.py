@@ -121,7 +121,9 @@ class GameControllers(BaseControllers):
         return game
             
     async def is_win(self, state: list):
-        return all(item == "" for item in state[:12])
+        if state[0] == "" and state[6] == "":
+            return True
+        return False
         
     async def notify_winner(self, game: dict, winner_id: str, is_room_ai: bool = False):
         if is_room_ai is True:
