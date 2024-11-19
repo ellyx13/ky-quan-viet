@@ -73,7 +73,10 @@ class GameServices(BaseServices):
         data_update = {}
         data_update["status"] = "completed"
         data_update["end_at"] = self.get_current_datetime()
-        duration = int((data_update["end_at"] - game["start_at"]).total_seconds())
+        try:
+            duration = int((data_update["end_at"] - game["start_at"]).total_seconds())
+        except Exception:
+            duration = 120
         result = await self.edit(_id=game_id, data=data_update, commons=commons)
         await history_services.create(game_id=game_id, winner_id=winner_id, duration=duration, commons=commons)
         if winner_id != "AI":

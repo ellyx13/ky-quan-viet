@@ -151,12 +151,12 @@ class GameControllers(BaseControllers):
             return True
         # Kiểm tra nếu bàn cờ của host (player 1) trống và họ không còn quân để rải
         host_empty = all(cell == "" for cell in state[7:12])
-        if host_empty and state[0] == "":
+        if host_empty and state[12] == "":
             return True
 
         # Kiểm tra nếu bàn cờ của guest (player 2) trống và họ không còn quân để rải
         guest_empty = all(cell == "" for cell in state[1:6])
-        if guest_empty and state[6] == "":
+        if guest_empty and state[13] == "":
             return True
     
         return False
