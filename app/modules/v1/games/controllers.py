@@ -200,8 +200,10 @@ class GameControllers(BaseControllers):
                     await self.send_state_to_other_player(game=game, data=data, commons=commons, is_room_ai=False)
                     is_win = await self.is_win(data["state"])
                     if is_win is True:
-                        await self.service.set_game_is_completed(game_id=game["_id"], winner_id=commons.current_user, commons=commons)
-                        await self.notify_winner(game=game, winner_id=commons.current_user)
+                        winner = await self.get_player_win(state=data["state"])
+                        winner_id = game['host_id'] if winner == "host" else game['guest_id']
+                        await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner_id, commons=commons)
+                        await self.notify_winner(game=game, winner_id=winner_id)
                         return
         except WebSocketDisconnect:
             game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code, commons=commons)
@@ -227,6 +229,25 @@ class GameControllers(BaseControllers):
         await self.game_is_ready_to_start(game=game, commons=commons, is_room_ai=True)
         return game
     
+    async def get_player_win(self, state: list):
+        # Điểm từ số quân đã ăn
+        host_score = len(state[12])  # Số quân thường Player 1 đã ăn
+        guest_score = len(state[13])  # Số quân thường Player 2 đã ăn
+
+        # Cộng thêm 10 điểm cho mỗi quan ("1" hoặc "2") trong score
+        host_score += (state[12].count("1") + state[12].count("2")) * 10
+        guest_score += (state[13].count("1") + state[13].count("2")) * 10
+
+        # Điểm từ các quân trên bàn cờ
+        host_board_score = sum(len(cell) for cell in state[7:12])  # Các ô của Player 1
+        guest_board_score = sum(len(cell) for cell in state[1:6])   # Các ô của Player 2
+
+        # Tổng điểm
+        total_host_score = host_score + host_board_score
+        total_guest_score = guest_score + guest_board_score
+        if total_host_score > total_guest_score:
+            return "host"
+        return "guest" 
     
     async def join_room_ai(self, websocket, game_id: str = None, game_code: str = None, commons: CommonsDependencies = None):
         await manager.connect(commons.current_user, websocket)
@@ -258,8 +279,10 @@ class GameControllers(BaseControllers):
                     await self.send_state_to_other_player(game=game, data=data, commons=commons, is_room_ai=True)
                 is_win = await self.is_win(data["state"])
                 if is_win is True:
-                    await self.service.set_game_is_completed(game_id=game["_id"], winner_id=player, commons=commons)
-                    await self.notify_winner(game=game, winner_id=player, is_room_ai=True)
+                    winner = await self.get_player_win(state=data["state"])
+                    winner_id = game['host_id'] if winner == "host" else "AI"
+                    await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner_id, commons=commons)
+                    await self.notify_winner(game=game, winner_id=winner_id, is_room_ai=True)
                     return
                 player = "AI" if player == commons.current_user else commons.current_user
         except WebSocketDisconnect:
