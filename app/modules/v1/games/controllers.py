@@ -79,7 +79,7 @@ class GameControllers(BaseControllers):
 
     async def player_disconnected(self, game: dict, current_user: str, is_room_ai: bool = False):
         if is_room_ai is True:
-            await manager.disconnect(user_id=current_user)
+            await manager.disconnect(user_id=current_user, is_close=False)
         else:
             other_player = await self.get_other_player(game=game, current_user=current_user)
             await manager.send_data(user_id=other_player, data=GameErrorCodeSocket.YouWinBecauseOtherPlayerLeft())
