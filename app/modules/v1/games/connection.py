@@ -12,7 +12,10 @@ class ConnectionManager:
         if is_close:
             websocket = self.active_connections.get(user_id)
             if websocket:
-                await websocket.close()
+                try:
+                    await websocket.close()
+                except Exception:
+                    pass
         self.active_connections.pop(user_id, None)
 
     async def send_message(self, user_id, message: str):
