@@ -183,7 +183,7 @@ class GameControllers(BaseControllers):
         try:
             while True:
                 data = await websocket.receive_text()
-                game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code)
+                game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code, commons=commons)
                 is_game_ready = await self.service.is_game_ready(game_id=game["_id"])
                 if is_game_ready is False:
                     await self.waiting_for_other_player(user_id=commons.current_user)
@@ -242,7 +242,7 @@ class GameControllers(BaseControllers):
                 else:
                     data = await websocket.receive_text()
                 print(f"Data received in room AI with id {game_id}: ", data)
-                game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code)
+                game = await self.get_by_room(websocket, game_id=game_id, game_code=game_code, commons=commons)
                 is_game_ready = await self.service.is_game_ready(game_id=game["_id"])
                 if is_game_ready is False:
                     await self.waiting_for_other_player(user_id=player)
