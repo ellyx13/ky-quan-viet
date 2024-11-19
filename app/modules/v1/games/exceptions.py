@@ -148,3 +148,12 @@ class ErrorCodeSocket:
         response["title"] = "Cannot join room."
         response["detail"] = "You are not the host in the room."
         return response
+    
+    @staticmethod
+    def YouDraw():
+        response = {}
+        response["type"] = "games/warning/draw"
+        response["status"] = 436
+        response["title"] = "Game is draw."
+        response["detail"] = "Game is draw."
+        return response

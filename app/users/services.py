@@ -87,6 +87,8 @@ class UserServices(BaseServices):
         return await self.update_by_id(_id=_id, data=data)
 
     async def increase_score(self, user_id: str, commons: CommonsDependencies) -> dict:
+        if user_id == "draw":
+            return
         user = await self.get_by_id(_id=user_id)
         if isinstance(user.get("score"), int):
             user["score"] += settings.default_score

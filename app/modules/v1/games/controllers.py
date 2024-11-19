@@ -162,19 +162,28 @@ class GameControllers(BaseControllers):
         return False
         
     async def notify_winner(self, game: dict, winner_id: str, is_room_ai: bool = False):
+        print(f"Winner id: {winner_id}")
+        print(f"Is room AI: {is_room_ai}")
         if is_room_ai is True:
-            if winner_id == "AI":
+            if winner_id == "draw":
+                await manager.send_data(user_id=game['host_id'], data=GameErrorCodeSocket.YouDraw())
+            elif winner_id == "AI":
                 await manager.send_data(user_id=game['host_id'], data=GameErrorCodeSocket.YouLost())
-                await manager.disconnect(user_id=game['host_id'])
             else:
                 await manager.send_data(user_id=game['host_id'], data=GameErrorCodeSocket.YouWin())
-                await manager.disconnect(user_id=game['host_id'])
+            await manager.disconnect(user_id=game['host_id'])
         else:
-            lost_id = await self.get_other_player(game=game, current_user=winner_id)
-            await manager.send_data(user_id=winner_id, data=GameErrorCodeSocket.YouWin())
-            await manager.send_data(user_id=lost_id, data=GameErrorCodeSocket.YouLost())
-            await manager.disconnect(user_id=winner_id)
-            await manager.disconnect(user_id=lost_id)
+            if winner_id == "draw":
+                await manager.send_data(user_id=game['host_id'], data=GameErrorCodeSocket.YouDraw())
+                await manager.send_data(user_id=game['guest_id'], data=GameErrorCodeSocket.YouDraw())
+                await manager.disconnect(user_id=game['host_id'])
+                await manager.disconnect(user_id=game['guest_id'])
+            else:
+                lost_id = await self.get_other_player(game=game, current_user=winner_id)
+                await manager.send_data(user_id=winner_id, data=GameErrorCodeSocket.YouWin())
+                await manager.send_data(user_id=lost_id, data=GameErrorCodeSocket.YouLost())
+                await manager.disconnect(user_id=winner_id)
+                await manager.disconnect(user_id=lost_id)
         
     async def join_room(self, websocket, game_id: str = None, game_code: str = None, commons: CommonsDependencies = None):
         await manager.connect(commons.current_user, websocket)
@@ -201,8 +210,12 @@ class GameControllers(BaseControllers):
                     is_win = await self.is_win(data["state"])
                     if is_win is True:
                         winner = await self.get_player_win(state=data["state"])
-                        winner_id = game['host_id'] if winner == "host" else game['guest_id']
-                        await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner_id, commons=commons)
+                        if winner == "draw":
+                            await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner, commons=commons)
+                            winner_id = "draw"
+                        else:
+                            winner_id = game['host_id'] if winner == "host" else game['guest_id']
+                            await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner_id, commons=commons)
                         await self.notify_winner(game=game, winner_id=winner_id)
                         return
         except WebSocketDisconnect:
@@ -245,9 +258,13 @@ class GameControllers(BaseControllers):
         # Tổng điểm
         total_host_score = host_score + host_board_score
         total_guest_score = guest_score + guest_board_score
+        print(f"Total host score: {total_host_score}")
+        print(f"Total guest score: {total_guest_score}")
         if total_host_score > total_guest_score:
             return "host"
-        return "guest" 
+        elif total_guest_score > total_host_score:
+            return "guest"
+        return "draw" 
     
     async def join_room_ai(self, websocket, game_id: str = None, game_code: str = None, commons: CommonsDependencies = None):
         await manager.connect(commons.current_user, websocket)
@@ -280,8 +297,13 @@ class GameControllers(BaseControllers):
                 is_win = await self.is_win(data["state"])
                 if is_win is True:
                     winner = await self.get_player_win(state=data["state"])
-                    winner_id = game['host_id'] if winner == "host" else "AI"
-                    await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner_id, commons=commons)
+                    print(f"Winner in room AI with id {game_id}: ", winner)
+                    if winner == "draw":
+                        await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner, commons=commons)
+                        winner_id = "draw"
+                    else:
+                        winner_id = game['host_id'] if winner == "host" else "AI"
+                        await self.service.set_game_is_completed(game_id=game["_id"], winner_id=winner_id, commons=commons)
                     await self.notify_winner(game=game, winner_id=winner_id, is_room_ai=True)
                     return
                 player = "AI" if player == commons.current_user else commons.current_user
