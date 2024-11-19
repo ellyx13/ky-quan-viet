@@ -173,7 +173,7 @@ state = ["1", "00000", "00000", "00000", "00000", "00000", "2", "00000", "00000"
 
 print("Initial state:")
 print(state)
-depth = 10
+depth = 5
 score = {"player1": "", "player2": ""}  # Khởi tạo điểm số
 # Chơi 2 người
 while True:
